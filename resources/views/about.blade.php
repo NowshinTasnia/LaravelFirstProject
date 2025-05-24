@@ -1,3 +1,3 @@
-<h1>ABOUT PAGE</h1>
+<h1>Welcome to About Page</h1>
 
-@include("common.links")
+@include('common.links')

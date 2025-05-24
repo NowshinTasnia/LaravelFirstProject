@@ -1,5 +1,4 @@
-<h1>HOME PAGE</h1>
+<h1>Welcome to Home Page</h1>
 
-<a href="/">HOME</a>
-<br><br>
-<a href="/about">ABOUT</a>
+<a href="/">Home</a>
+<a href="/about">About</a>
