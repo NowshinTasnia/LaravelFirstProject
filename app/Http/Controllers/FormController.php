@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-
 use Illuminate\Http\Request;
-use Illuminate\syupport\Facades\DB;
-use App\Model\Student;
-
+use Illuminate\Support\Facades\DB;
+use Auth;
+use App\Models\Student;
 class FormController extends Controller
 {
     public function create()
@@ -22,36 +21,110 @@ class FormController extends Controller
             'email' => 'required',
             'std_id' => 'required',
         ]);
+        echo $request->first_name;
+        echo "<br>";
+        echo $request->last_name;
+        echo "<br>";
+        echo $request->email;
+        echo "<br>";
+        echo $request->std_id;
+        //return $request;
 
+        $student = new Student();
+        
+        $student->std_id = $request->std_id;
+        $student->first_name = $request->first_name;
+        $student->last_name = $request->last_name;
+        $student->email = $request->email;
 
-        $stuent = new Student();
+        //var_dump($student);
+        $student->save();
+        return redirect(url('')."/student/list");
+    }
+    
+    public function edit($id)
+    {
+       //echo $id;
+       $student = Student::find($id);
+    //    echo $student->first_name;
+    //    echo $student->full_name();
+    //     //     echo "<pre>";
+        return view('student.edit', ["student" => $student]);
+       
+    }
 
-        $student->std_id=$request->std_id;
-        $student->first_name=$request->first_name;
-        $student->last_name=$request->last_name;
-        $student->email=$request->email;
+    public function update(Request $request)
+    {
+        $request->validate([
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'email' => 'required',
+            'std_id' => 'required',
+        ]);
+        
+        //return $request;
 
-        //var_dump($student)
+        $student = Student::find($request->id);
+        
+        $student->std_id = $request->std_id;
+        $student->first_name = $request->first_name;
+        $student->last_name = $request->last_name;
+        $student->email = $request->email;
+
+        //var_dump($student);
         $student->save();
 
-        // echo $request->first_name;
-        // echo "<br>";
-        // echo $request->last_name;
-        // echo "<br>";
-        // echo $request->email;
-        // echo "<br>";
-        // echo $request->std_id;
-        //return $request;
+        return redirect(url('')."/student/list");
     }
+
+
 
     public function student_list()
     {
-        echo "Nowshin";
+        //echo "Got it";
+        $student = Student::find(1);
+       // echo $student->first_name;
+        // echo "<br>";
+        // echo $student->full_name();
         //$students = Student::all();
+        $students = DB::select("SELECT *, concat(first_name,' ',last_name) as 'full_name' FROM `students`");
+        // echo "<pre>";
+        // print_r($students);
 
-        $students = DB::select("SELECT * FROM `students`"); 
-        //echo "<pre>";
-        //rint_r($students);
-        return view('student.list',["students" => $student]);
+        
+
+        // if(Auth::user()->user_type=="Super Admin")
+        // {
+        //     return view('student.list', ["students" => $students]);
+        // }
+        // else{
+        //     return redirect('/user-logout');
+        // }
+        return view('student.list', ["students" => $students]);
     }
+
+    public function delete($id)
+    {
+       //echo $id;
+       DB::table("students")->where('id',$id)->delete();
+       //forceDelete()
+       return redirect(url('')."/student/list");
+       
+    }
+    public function view($id)
+    {
+       $student = Student::find($id);
+       return view('student.view', ["student" => $student]);
+       
+    }
+
+    public function remove(Request $req)
+    {
+       //echo $id;
+       DB::table("students")->where('id',$req->input('id'))->delete();
+       //forceDelete()
+       return redirect(url('')."/student/list");
+       
+    }
+
 }
